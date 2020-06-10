@@ -8,6 +8,11 @@ import java.util.Collection;
 /**
  * Holding left-click draws, and
  * right-clicking cycles the color.
+ *
+ * What to learn:
+ * line 21 JPanel initialization
+ * use mouseAdapter for mouseListener and mouseMotionListener
+ *
  */
 public class DrawingBoard {
     Color[] colors = {Color.red, Color.blue, Color.black};
@@ -19,9 +24,7 @@ public class DrawingBoard {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            // Creating a copy of the Graphics
-            // so any reconfiguration we do on
-            // it doesn't interfere with what
+            // Creating a copy of the Graphics so any reconfiguration we do on it doesn't interfere with what
             // Swing is doing.
             Graphics2D g2copy = (Graphics2D) g.create();
             int w = img.getWidth();
@@ -99,6 +102,7 @@ public class DrawingBoard {
 
         panel.setPreferredSize(new Dimension(img.getWidth(),img.getHeight()));
         panel.setBackground(Color.WHITE);
+        // add listener
         panel.addMouseListener(drawingPen);
         panel.addMouseMotionListener(drawingPen);
 
