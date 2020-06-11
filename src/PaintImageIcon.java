@@ -9,7 +9,7 @@ public class PaintImageIcon extends JPanel {
     // Constructor
     public PaintImageIcon() {
         // define icon property
-        icon = new ImageIcon("src/Pig.gif");
+        icon = new ImageIcon("src/Bird.gif");
         int w = icon.getIconWidth();
 
         int h = icon.getIconHeight();
