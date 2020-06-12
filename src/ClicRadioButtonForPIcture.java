@@ -53,14 +53,14 @@ public class ClicRadioButtonForPIcture extends JPanel implements ActionListener 
 
         // add listener
         rabbitBtn.addActionListener(this);
-        rabbitBtn.addActionListener(this);
-        rabbitBtn.addActionListener(this);
-        rabbitBtn.addActionListener(this);
-        rabbitBtn.addActionListener(this);
+        catBtn.addActionListener(this);
+        dogBtn.addActionListener(this);
+        birdBtn.addActionListener(this);
+        pigBtn.addActionListener(this);
 
         // add JLabelPic
         //method 1 createImageIcon -- not sure not working
-        ImageIcon imageIcons = createImageIcon("Bird.gif");
+       // ImageIcon imageIcons = createImageIcon("images/Bird.gif");
 
 
         // method 2 use URL
@@ -68,7 +68,7 @@ public class ClicRadioButtonForPIcture extends JPanel implements ActionListener 
 //        ImageIcon imageIcon = new ImageIcon(url,"a description");
         // method 3
 //        ImageIcon imageIcon = new ImageIcon("src/Bird.gif");
-        ImageIcon imageIcon = new ImageIcon(getClass().getResource("Bird.gif"));
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource("images/Bird.gif"));
         jLabelPic = new JLabel(imageIcon);
         jLabelPic.setPreferredSize(new Dimension(imageIcon.getIconWidth(),imageIcon.getIconHeight()));
 
@@ -91,7 +91,7 @@ public class ClicRadioButtonForPIcture extends JPanel implements ActionListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         jLabelPic.setIcon(createImageIcon(
-                e.getActionCommand()
+                "images/" + e.getActionCommand()
                         + ".gif"));
     }
 
@@ -107,6 +107,7 @@ public class ClicRadioButtonForPIcture extends JPanel implements ActionListener 
     }
 
     public static void main(String[] args) {
+
         SwingUtilities.invokeLater(ClicRadioButtonForPIcture::creatGUI);
     }
 }
