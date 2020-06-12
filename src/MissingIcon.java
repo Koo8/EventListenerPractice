@@ -1,9 +1,5 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import javax.swing.Icon;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The "missing icon" is a white box with a black border and a red x.
@@ -15,8 +11,8 @@ import javax.swing.Icon;
  */
 public class MissingIcon implements Icon{
 
-    private int width = 32;
-    private int height = 32;
+    private int width = 25;
+    private int height = 25;
 
     private BasicStroke stroke = new BasicStroke(4);
 
