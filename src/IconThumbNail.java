@@ -51,7 +51,7 @@ public class IconThumbNail extends JFrame {
                 // two possibilities - bigIcon is valid, or not valid
                 ThumbAction action;
                 if (bigIcon != null) {
-                    ImageIcon smallIcon = new ImageIcon(resizeIcon(bigIcon.getImage(), 25,25));
+                    ImageIcon smallIcon = new ImageIcon(Utilities.resizeIcon(bigIcon.getImage(), 25,25));
                     action = new ThumbAction(bigIcon,smallIcon,imageCaptions[i]);
                 } else {
                     action = new ThumbAction(placeHolder,placeHolder,imageCaptions[i]);
@@ -73,14 +73,14 @@ public class IconThumbNail extends JFrame {
         }
     };
 
-    private Image resizeIcon(Image oriIcon, int w, int h) {
-
-        BufferedImage resizedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = resizedImage.createGraphics();
-        g2d.drawImage(oriIcon,0,0,w, h,null);
-        g2d.dispose();
-        return resizedImage;
-    }
+//    private Image resizeIcon(Image oriIcon, int w, int h) {
+//
+//        BufferedImage resizedImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+//        Graphics2D g2d = resizedImage.createGraphics();
+//        g2d.drawImage(oriIcon,0,0,w, h,null);
+//        g2d.dispose();
+//        return resizedImage;
+//    }
 // this method is a standard method on oracle doc website
     private ImageIcon createImageIcon(String path,
                                         String description) {
