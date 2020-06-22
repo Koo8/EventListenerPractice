@@ -49,7 +49,8 @@ public class THreeActionByButtonAndMenu extends JPanel implements ItemListener {
         //first button
         button = new JButton(leftAction);
         if (button.getIcon() != null) {
-            button.setText(""); //an icon-only button
+            button.setHideActionText(true);
+            //button.setText(""); //an icon-only button
         }
         toolBar.add(button);
 
