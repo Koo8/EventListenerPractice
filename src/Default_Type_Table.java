@@ -69,6 +69,7 @@ public class Default_Type_Table extends JPanel implements TableModelListener {
 
     @Override // for TableModelListener, which is an interface implemented by JTable
     public void tableChanged(TableModelEvent e) {
+        System.out.println("tableChanged method is entered");
         // TableModel is the source.
         TableModel model = (TableModel) e.getSource();
         Object celldata = model.getValueAt(e.getFirstRow(), e.getColumn());
@@ -86,6 +87,8 @@ public class Default_Type_Table extends JPanel implements TableModelListener {
     }
 
     public static void main(String[] args) {
+        //Schedule a job for the event-dispatching thread:
+        //creating and showing this application's GUI.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

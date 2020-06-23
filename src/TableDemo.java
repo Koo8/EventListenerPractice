@@ -8,7 +8,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 
 /**
- * TableDemo is just like SimpleTableDemo, except that it
+ * TableDemo is just like Default type table , except that it
  * uses a custom TableModel.
  */
 public class TableDemo extends JPanel {
@@ -28,7 +28,7 @@ public class TableDemo extends JPanel {
         add(scrollPane);
     }
 
-    class MyTableModel extends AbstractTableModel {
+    class MyTableModel extends AbstractTableModel { // extends for creating subclass tableModel use AbstractTableModel,not defaultTableModel
 
         private String[] columnNames = {"First Name",
                 "Last Name",
@@ -96,7 +96,6 @@ public class TableDemo extends JPanel {
                 return true;
             }
         }
-//todo: where is the listener, only the boolean column can be listened
         /*
          * Don't need to implement this method unless your table's
          * data can change.
