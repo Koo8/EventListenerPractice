@@ -9,10 +9,10 @@ import java.awt.*;
  * Use defaultTableModel
  * See constructor part for its limited benefits
  */
-public class Default_Type_Table extends JPanel implements TableModelListener {
+public class Default_TableModel_Table extends JPanel implements TableModelListener {
 
     // Constructor
-    Default_Type_Table() {
+    Default_TableModel_Table() {
         // super(new GridLayout(1, 0));
         //declares the column names in a String array:
         String[] columnNames = {"First Name",
@@ -79,7 +79,7 @@ public class Default_Type_Table extends JPanel implements TableModelListener {
     public static void CreateAndShowGUI() {
         JFrame frame = new JFrame(" MY Default Table - Simple ");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Default_Type_Table panel = new Default_Type_Table();
+        Default_TableModel_Table panel = new Default_TableModel_Table();
 
         frame.setContentPane(panel);
         frame.pack();

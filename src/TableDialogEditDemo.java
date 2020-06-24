@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * This is like TableDemo, except that it substitutes a
+ * This is like Custom_TableModel_Table, except that it substitutes a
  * Favorite Color column for the Last Name column and specifies
  * a custom cell renderer and editor for the color data.
  */

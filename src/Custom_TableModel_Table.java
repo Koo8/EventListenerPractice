@@ -2,14 +2,20 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 
 /**
- *
+ * Custom TableModel, TableModelListener,
+ * TableCellRenderer render column width and comboBox for one cloumn
+ * CellEditor, defaultTableCellEditor
  */
 public class Custom_TableModel_Table extends  JPanel implements TableModelListener{
      private   JTable table;
+     private TableColumn column;
+     private Component component;
 
     // constructor
     Custom_TableModel_Table () {
@@ -19,9 +25,54 @@ public class Custom_TableModel_Table extends  JPanel implements TableModelListen
         table = new JTable(new CustomTableModel());
         table.setPreferredScrollableViewportSize(new Dimension(500, 200));
         table.setFillsViewportHeight(true);
-        add(table);
+        JScrollPane pane = new JScrollPane(table);
+        add(pane);
         table.getModel().addTableModelListener(this);
 
+        // when need to control column size
+        initColumnSizes(table);
+        // add checkbox in one column
+        setUpComboBoxforSportsColumn(table, table.getColumnModel().getColumn(2));
+
+
+    }
+    // use TableCellRenderer to retrieve cell data
+    private void initColumnSizes(JTable table) {
+        int headerWidth, cellWidth;
+        CustomTableModel model = (CustomTableModel) table.getModel();
+
+        for (int i = 0; i <table.getColumnCount() ; i++) {
+            // get down to each column
+            column = table.getColumnModel().getColumn(i);
+           // get header length
+            component = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(
+                    null,column.getHeaderValue(),false,false,0,0); // todo: why this table is set null?
+            headerWidth = component.getPreferredSize().width;
+            // get cell length
+            component = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table,model.data[0][i],false,false, 0,i );// choose data[0][i] because data 0 has longest cell
+            cellWidth = component.getPreferredSize().width;
+
+            // compare and take the max value
+            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+
+        }
+    }
+
+    private void setUpComboBoxforSportsColumn(JTable table, TableColumn column) {
+        //set up celleditor for the column
+        JComboBox<String> comboBox = new JComboBox<>();
+        comboBox.addItem("Snowboarding");
+        comboBox.addItem("Rowing");
+        comboBox.addItem("Knitting");
+        comboBox.addItem("Speed reading");
+        comboBox.addItem("Pool");
+        comboBox.addItem("None of the above");
+        column.setCellEditor(new DefaultCellEditor(comboBox));
+
+        // set up cell renderer for tooltiptext
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
+        cellRenderer.setToolTipText("Click for more options");
+        column.setCellRenderer(cellRenderer);
     }
 
     @Override
@@ -39,7 +90,7 @@ public class Custom_TableModel_Table extends  JPanel implements TableModelListen
                 "Vegetarian"};
         private Object[][] data= {
                 {"Kathy", "Smith",
-                        "Snowboarding", 5, Boolean.FALSE},
+                        "Snowboarding and Extra", 5, Boolean.FALSE},
                 {"John", "Doe",
                         "Rowing", 3, Boolean.TRUE},
                 {"Sue", "Black",
