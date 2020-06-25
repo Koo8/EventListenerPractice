@@ -10,7 +10,10 @@ import java.awt.*;
 /**
  * Custom TableModel, TableModelListener,
  * TableCellRenderer render column width and comboBox for one cloumn
- * CellEditor, defaultTableCellEditor
+ * CellEditor , TableCellEditor, tooltiptext from renderer
+ * TableCellEditor as parent class for ColorColumnCellEditor
+ * TableCellRenderer as parent class for ColorColumnCellRenderer
+ *
  */
 public class Custom_TableModel_Table extends  JPanel implements TableModelListener{
      private   JTable table;
@@ -32,16 +35,21 @@ public class Custom_TableModel_Table extends  JPanel implements TableModelListen
         // when need to control column size
         initColumnSizes(table);
         // add checkbox in one column
-        setUpComboBoxforSportsColumn(table, table.getColumnModel().getColumn(2));
+        setUpComboBoxforSportsColumn(table, table.getColumnModel().getColumn(3));
 
+        // add ColorRenderer and ColorEditor to the colorColumn which is index 2, or use Color.class
+        table.setDefaultEditor(table.getColumnClass(2),new ColorColumnCellEditor());
+        // render border, background and tooltiptext for color column
+        table.setDefaultRenderer(Color.class, new ColorColumnTableCellRenderer());
 
     }
-    // use TableCellRenderer to retrieve cell data
+    // use TableCellRenderer to retrieve the component
     private void initColumnSizes(JTable table) {
         int headerWidth, cellWidth;
         CustomTableModel model = (CustomTableModel) table.getModel();
 
         for (int i = 0; i <table.getColumnCount() ; i++) {
+
             // get down to each column
             column = table.getColumnModel().getColumn(i);
            // get header length
@@ -51,7 +59,9 @@ public class Custom_TableModel_Table extends  JPanel implements TableModelListen
             // get cell length
             component = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table,model.data[0][i],false,false, 0,i );// choose data[0][i] because data 0 has longest cell
             cellWidth = component.getPreferredSize().width;
-
+            if(i == 2) {
+                cellWidth = 100; // to shorten the color column
+            }
             // compare and take the max value
             column.setPreferredWidth(Math.max(headerWidth, cellWidth));
 
@@ -85,19 +95,20 @@ public class Custom_TableModel_Table extends  JPanel implements TableModelListen
 
         private String[] columnNames = {"First Name",
                 "Last Name",
+                "Favorite Color",
                 "Sport",
                 "# of Years",
                 "Vegetarian"};
         private Object[][] data= {
-                {"Kathy", "Smith",
+                {"Kathy", "Smith",new Color(153, 0, 153),
                         "Snowboarding and Extra", 5, Boolean.FALSE},
-                {"John", "Doe",
+                {"John", "Doe",new Color(51, 51, 153),
                         "Rowing", 3, Boolean.TRUE},
-                {"Sue", "Black",
+                {"Sue", "Black",new Color(51, 102, 51),
                         "Knitting", 2, Boolean.FALSE},
-                {"Jane", "White",
+                {"Jane", "White",Color.red,
                         "Speed reading", 20, Boolean.TRUE},
-                {"Joe", "Brown",
+                {"Joe", "Brown", Color.pink,
                         "Pool", 10, Boolean.FALSE}
         };
 
