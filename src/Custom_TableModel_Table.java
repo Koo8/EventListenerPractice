@@ -12,26 +12,37 @@ import java.awt.event.MouseEvent;
  * TableCellEditor as parent class for ColorColumnCellEditor
  * TableCellRenderer as parent class for ColorColumnCellRenderer
  * ** This is a JPanel class that contain a JTable component
- * set up tooltips for cells and columnHeaders.
+ * set up tooltips for cells and columnHeaders using "getToolTipText()" method from JTable and JTableHeader.
+ * TableSorter.java was inserted between CustomTableModel and JTable, to achieve sorting and filtering functionality
+ *
  */
 public class Custom_TableModel_Table extends JPanel implements TableModelListener{
      private   JTable table;
      private TableColumn column;
      private Component component;
-     private String[] columnToolTips = {null,
-             null,
-             "The person's fav color",
-             "The person's favorite sport to participate in",
-             "The number of years the person has played the sport",
-             "If checked, the person eats no meat"};
+     private String clickString = "click to sort";
+
+     private int headerWidth, cellWidth;
+     private static CustomTableModel model;
+     private String[] columnToolTips = {clickString,
+             clickString,
+             "The person's fav color, " +clickString ,
+             "The person's favorite sport to participate in, " + clickString,
+             "The number of years the person has played the sport, " + clickString,
+             "If checked, the person eats no meat, " + clickString};
 
     // constructor
     Custom_TableModel_Table () {
         //super(new GridLayout(1, 0));
+        model = new CustomTableModel();
+        TableSorter sorter = new TableSorter(model); // ADD FOR SORTING
 
         // Create Table that use customized TableModel
        // table = new JTable(new CustomTableModel()); // oo this line was replaced by the block below for tooltip text display. I don't know how to do it otherwise.
-        table = new JTable(new CustomTableModel()) { // override "getToolTipText" from JComponent for cell tooltips, and "createDefaultTableHeader" from JTable for columnHeader tooltips
+
+        // insert the tableSorter between model and Jtable,to sort and filter the jtable
+        // parameter was "new CustomTableModel", changed to "sorter" for sorting purpose
+        table = new JTable(sorter) { // override "getToolTipText" from JComponent for cell tooltips, and "createDefaultTableHeader" from JTable for columnHeader tooltips
             @Override
             public String getToolTipText(MouseEvent event) {
                 // firstly -- find the event fire location
@@ -62,7 +73,7 @@ public class Custom_TableModel_Table extends JPanel implements TableModelListene
                 return tip;
             }
 
-
+            // set the code immediately below for another way of setting tableheader tool tips
             @Override
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) { // columnModel is one of JTableHeader fields, it is TableColumnModel of header
@@ -76,14 +87,25 @@ public class Custom_TableModel_Table extends JPanel implements TableModelListene
                 };
             }
         };
+
+       // table.getTableHeader().setToolTipText("Only when all column has the same tool tips, use this simple code");
+
+        sorter.setTableHeader(table.getTableHeader());  //ADDED to sort by column headers
         table.setPreferredScrollableViewportSize(new Dimension(500, 200));
         table.setFillsViewportHeight(true);
         JScrollPane pane = new JScrollPane(table);
         add(pane);
         table.getModel().addTableModelListener(this);
 
-        // when need to control column size
-        initColumnSizes(table);
+        // todo: when need to control column size
+        // method 1 not working with added TableSorter.java
+       // initColumnSizes(table);
+       // method 2 : the table width initial set up need to be over 600, otherwise the horizontal bar is auto shown.
+      init();
+        // method3: the longest string may get cut if the table width is not long enough
+//        for (int i = 0; i < table.getColumnCount(); i++) {
+//            adjustColumnSizes(table, i, 2);
+//        }
         // add checkbox in one column
         setUpComboBoxforSportsColumn(table, table.getColumnModel().getColumn(3));
 
@@ -93,30 +115,65 @@ public class Custom_TableModel_Table extends JPanel implements TableModelListene
         table.setDefaultRenderer(Color.class, new ColorColumnTableCellRenderer());
 
     }
+
+    // method 1 - to adjust column width, not working after added TableSorter.java
     // use TableCellRenderer to retrieve the component
-    private void initColumnSizes(JTable table) {
-        int headerWidth, cellWidth;
-        CustomTableModel model = (CustomTableModel) table.getModel();
+//    private void initColumnSizes(JTable table) {
+//        int headerWidth, cellWidth;
+//       // CustomTableModel model = (CustomTableModel) table.getModel();
+//
+//        for (int i = 0; i <table.getColumnCount() ; i++) {
+//
+//            // get down to each column
+//            column = table.getColumnModel().getColumn(i);
+//            component = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(
+//                    null,column.getHeaderValue(),false,false,0,0); // todo: why this table is set null?
+//            headerWidth = component.getPreferredSize().width;//           // get header length
+//            // get cell length
+//            component = table.getDefaultRenderer(table.getModel().getColumnClass(i)).getTableCellRendererComponent(table,model.data[0][i],false,false, 0,i );// choose data[0][i] because data 0 has longest cell
+//            cellWidth = component.getPreferredSize().width;
+//            if(i == 2) {
+//                cellWidth = 100; // to shorten the color column
+//            }
+//            // compare and take the max value
+//            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
+//
+//        }
+//    }
+    // method 2 of column width adjustment - won't cut long string, if table is not wide enough, will show horizontal scroll to help
+    public void init() {
+        table.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+        TableColumnAdjuster tca = new TableColumnAdjuster(table);
+        tca.adjustColumns();
 
-        for (int i = 0; i <table.getColumnCount() ; i++) {
-
-            // get down to each column
-            column = table.getColumnModel().getColumn(i);
-           // get header length
-            component = table.getTableHeader().getDefaultRenderer().getTableCellRendererComponent(
-                    null,column.getHeaderValue(),false,false,0,0); // todo: why this table is set null?
-            headerWidth = component.getPreferredSize().width;
-            // get cell length
-            component = table.getDefaultRenderer(model.getColumnClass(i)).getTableCellRendererComponent(table,model.data[0][i],false,false, 0,i );// choose data[0][i] because data 0 has longest cell
-            cellWidth = component.getPreferredSize().width;
-            if(i == 2) {
-                cellWidth = 100; // to shorten the color column
-            }
-            // compare and take the max value
-            column.setPreferredWidth(Math.max(headerWidth, cellWidth));
-
-        }
     }
+    // method 3 - will cut long string if table width is not enough, but will show all column in the view without a horizontal bar
+    // also, todo: may occasionally has sorter outofindexbound error
+//    public static void adjustColumnSizes(JTable table, int column, int margin) {
+//        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
+//        TableColumn col = colModel.getColumn(column);
+//        int width;
+//
+//        TableCellRenderer renderer = col.getHeaderRenderer();
+//        if (renderer == null) {
+//            renderer = table.getTableHeader().getDefaultRenderer();
+//        }
+//        Component comp = renderer.getTableCellRendererComponent(
+//                table, col.getHeaderValue(), false, false, 0, 0);
+//        width = comp.getPreferredSize().width;
+//
+//        for (int r = 0; r < table.getRowCount(); r++) {
+//            renderer = table.getCellRenderer(r, column);
+//            comp = renderer.getTableCellRendererComponent(
+//                    table, table.getValueAt(r, column), false, false, r, column);
+//            int currentWidth = comp.getPreferredSize().width;
+//            width = Math.max(width, currentWidth);
+//        }
+//
+//        width += 2 * margin;
+//
+//        col.setPreferredWidth(width);
+//    }
 
     private void setUpComboBoxforSportsColumn(JTable table, TableColumn column) {
         //set up celleditor for the column

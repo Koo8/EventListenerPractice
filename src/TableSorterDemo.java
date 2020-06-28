@@ -1,83 +1,40 @@
-import javax.swing.JComponent;
+
+/*
+ * TableSorterDemo.java requires this file:
+ *   TableSorter.java
+ */
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.MouseEvent;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
 /**
- * TableToolTipsDemo is just like TableDemo except that it
- * sets up tool tips for both cells and column headers.
+ * TableSorterDemo is like TableDemo, except that it
+ * inserts a custom model -- a sorter -- between the table
+ * and its data model.  It also has column tool tips.
  */
-public class TableToolTipsDemo extends JPanel {
+public class TableSorterDemo extends JPanel {
     private boolean DEBUG = false;
-    protected String[] columnToolTips = {null,
-            null,
-            "The person's favorite sport to participate in",
-            "The number of years the person has played the sport",
-            "If checked, the person eats no meat"};
 
-    public TableToolTipsDemo() {
-        //  super(new GridLayout(1,0));
-        // this jtable needs to override two methods
-        JTable table = new JTable(new MyTableModel()) {
-            //from JComponent
-            public String getToolTipText(MouseEvent e) {
-                // first -- find where the event is fired using Point
-                String tip = null;
-                Point p = e.getPoint(); //Returns the x,y position of the event relative to the source component.
-                int rowIndex = rowAtPoint(p); // rowAtPoint Returns the index of the row that point lies in
-                int colIndex = columnAtPoint(p);
-                int realColumnIndex = convertColumnIndexToModel(colIndex); // translate the view index to a model index so that for sure the intended column is selected.
-                // set up sports column tooltips
-                if (realColumnIndex == 2) { //Sport column
-                    tip = "This person's favorite sport to "
-                            + "participate in is: "
-                            + getValueAt(rowIndex, colIndex);
-                } else if (realColumnIndex == 4) { //Veggie column
-                    TableModel model = getModel();
-                    String firstName = (String) model.getValueAt(rowIndex, 0);
-                    String lastName = (String) model.getValueAt(rowIndex, 1);
-                    Boolean veggie = (Boolean) model.getValueAt(rowIndex, 4);
-                    if (Boolean.TRUE.equals(veggie)) {
-                        tip = firstName + " " + lastName
-                                + " is a vegetarian";
-                    } else {
-                        tip = firstName + " " + lastName
-                                + " is not a vegetarian";
-                    }
-                } else {
-                    //You can omit this part if you know you don't
-                    //have any renderers that supply their own tool
-                    //tips.
-                    tip = super.getToolTipText(e);
-                }
-                return tip;
-            }
+    public TableSorterDemo() {
+        super(new GridLayout(1,0));
 
-            //Implement table header tool tips. ==> from JTable
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    public String getToolTipText(MouseEvent e) {
-                        String tip = null;
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        return columnToolTips[realIndex];
-                    }
-                };
-            }
-        };
-
+        TableSorter sorter = new TableSorter(new MyTableModel()); //ADDED THIS
+        //JTable table = new JTable(new MyTableModel());         //OLD
+        JTable table = new JTable(sorter);             //NEW
+        sorter.setTableHeader(table.getTableHeader()); //ADDED THIS
         table.setPreferredScrollableViewportSize(new Dimension(500, 70));
-        table.setFillsViewportHeight(true);
+
+        //Set up tool tips for column headers.
+        table.getTableHeader().setToolTipText(
+                "Click to specify sorting; Control-Click to specify secondary sorting");
 
         //Create the scroll pane and add the table to it.
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(table); // if scrollpane is defined first, use scroll.setViewPortView(table) to  connect the two
 
         //Add the scroll pane to this panel.
         add(scrollPane);
@@ -167,9 +124,9 @@ public class TableToolTipsDemo extends JPanel {
             int numRows = getRowCount();
             int numCols = getColumnCount();
 
-            for (int i = 0; i < numRows; i++) {
+            for (int i=0; i < numRows; i++) {
                 System.out.print("    row " + i + ":");
-                for (int j = 0; j < numCols; j++) {
+                for (int j=0; j < numCols; j++) {
                     System.out.print("  " + data[i][j]);
                 }
                 System.out.println();
@@ -185,11 +142,11 @@ public class TableToolTipsDemo extends JPanel {
      */
     private static void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("TableToolTipsDemo");
+        JFrame frame = new JFrame("TableSorterDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
-        JComponent newContentPane = new TableToolTipsDemo();
+        TableSorterDemo newContentPane = new TableSorterDemo();
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(newContentPane);
 
